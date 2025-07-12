@@ -8,24 +8,27 @@
 static Player player;
 static Rectangle platforms[MAX_PLATFORMS];
 static int platformCount = 0;
+static Texture2D playerTexture;
 
 static Camera2D camera;
 
 void InitGame(void)
 {
     InitPlayer(&player);
+    playerTexture = LoadTexture("assets/images/player.png");
 
     // Create the platforms
     platforms[0] = (Rectangle){0, 400, 1600, 50}; // ground
-    platforms[1] = (Rectangle){300, 320, 100, 10};
-    platforms[2] = (Rectangle){600, 260, 120, 10};
-    platforms[3] = (Rectangle){1000, 300, 100, 10};
-    platforms[4] = (Rectangle){1300, 200, 100, 10};
-    platformCount = 5;
+    platforms[1] = (Rectangle){1650, 400, 300, 50};
+    platforms[2] = (Rectangle){300, 320, 100, 10};
+    platforms[3] = (Rectangle){600, 260, 120, 10};
+    platforms[4] = (Rectangle){1000, 300, 100, 10};
+    platforms[5] = (Rectangle){1300, 200, 100, 10};
+    platformCount = 6;
 
-    //init the cam
-    camera.target = (Vector2){ 0, 0 };
-    camera.offset = (Vector2){ 400, 225}; // Center of the screen
+    // init the cam
+    camera.target = (Vector2){0, 0};
+    camera.offset = (Vector2){400, 300}; // Center of the screen. Half of the screen size
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 }
@@ -36,12 +39,13 @@ void UpdateGame(void)
 
     UpdatePlayer(&player, delta, platforms, platformCount);
 
-    camera.target = (Vector2) {
+    // Updates the cam based on the player x
+    // The y axys stays fixed
+    camera.target = (Vector2){
         player.position.x + player.width / 2,
-        player.position.y + player.height / 2
-    };
+        300};
 
-    //Draw the map
+    // Draw the map
     BeginMode2D(camera);
 
     for (int i = 0; i < platformCount; i++)
@@ -49,7 +53,7 @@ void UpdateGame(void)
         DrawRectangleRec(platforms[i], DARKGRAY);
     }
 
-    DrawPlayer(player);
+    DrawPlayer(player, playerTexture);
 
     EndMode2D();
 
@@ -61,4 +65,7 @@ void UpdateGame(void)
     DrawText(TextFormat("FPS: %d", GetFPS()), 10, 120, 20, YELLOW);
 }
 
-void CloseGame(void) {}
+void CloseGame(void)
+{
+    UnloadTexture(playerTexture);
+}

@@ -10,7 +10,7 @@
 #define GRAVITY 400.0f
 #define MOVE_SPEED 200.0f
 #define JUMP_FORCE -250.0f
-#define WORLD_WIDTH 1600
+#define WORLD_WIDTH 1950
 #define WORLD_HEIGHT 450
 
 void InitPlayer(Player *player)
@@ -20,8 +20,13 @@ void InitPlayer(Player *player)
     (*player).width = 20;
     (*player).height = 40;
     (*player).isOnGround = false;
+    (*player).frame = 0;
+    (*player).frameTime = 0.0f;
+    (*player).frameSpeed = 6.0f; // Frames per second
+    (*player).maxFrames = 8;     // Total number of frames
 }
 
+// Update
 void UpdatePlayer(Player *player, float delta, Rectangle *platforms, int platformCount)
 {
     bool onGround = false;
@@ -128,9 +133,26 @@ void UpdatePlayer(Player *player, float delta, Rectangle *platforms, int platfor
     // Clamp to avoid the player from exiting the screen
     (*player).position.x = MyClamp((*player).position.x, 0, WORLD_WIDTH - (*player).width);
     (*player).position.y = MyClamp((*player).position.y, 0, WORLD_HEIGHT - (*player).height);
+
+    (*player).frameTime += delta;
+    if ((*player).velocity.x != 0)
+    {
+        if ((*player).frameTime >= 1.0f / (*player).frameSpeed)
+        {
+            (*player).frameTime = 0;
+            (*player).frame = ((*player).frame + 1) % (*player).maxFrames;
+        }
+    }
+    else
+    {
+        (*player).frame = 0;
+    }
 };
 
-void DrawPlayer(Player player)
+// Draw
+void DrawPlayer(Player player, Texture2D texture)
 {
-    DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLUE);
+    Rectangle source = {(player).frame * 20, 0, 20, 40};
+    Vector2 position = {player.position.x, player.position.y};
+    DrawTextureRec(texture, source, position, WHITE);
 }

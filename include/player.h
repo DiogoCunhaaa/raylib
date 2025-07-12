@@ -10,11 +10,15 @@ typedef struct Player {
     float width;
     float height;
     bool isOnGround;
+    int frame;
+    float frameTime;
+    float frameSpeed;
+    int maxFrames;
 } Player;
 
 //Player related functions 
 void InitPlayer(Player *player); //iniciates the player 
 void UpdatePlayer(Player *player, float delta, Rectangle *platforms, int platformCount); //update the player 
-void DrawPlayer(Player player); // draw the player on screen
+void DrawPlayer(Player player, Texture2D texture); // draw the player on screen
 
 #endif
