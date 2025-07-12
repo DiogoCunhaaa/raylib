@@ -1,7 +1,8 @@
 @echo off
+
 REM Compila um projeto Raylib + Raygui estruturado
 
-set SRC=src\main.c src\menu.c src\game.c src\text_utils.c
+set SRC=src\main.c src\menu.c src\game.c src\text_utils.c src\player.c
 set OUT=app.exe
 set INCLUDES=-Iinclude -IC:\raylib\include
 set LIBS=-LC:\raylib\lib -lraylib -lopengl32 -lgdi32 -lwinmm

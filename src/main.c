@@ -18,9 +18,8 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "Jogo");
 
-    GameScreen currentScreen = SCREEN_MENU;
+    GameScreen currentScreen = SCREEN_GAME;
 
-    InitMenu();
     InitGame();
 
     SetTargetFPS(60);
