@@ -1,0 +1,7 @@
+# Executáveis e binários
+*.exe
+*.o
+*.out
+
+# Arquivos de configuração local (se necessário)
+.vscode/
