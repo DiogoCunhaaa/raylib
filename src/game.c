@@ -8,14 +8,20 @@
 static Player player;
 static Rectangle platforms[MAX_PLATFORMS];
 static int platformCount = 0;
+
 static Texture2D playerTexture;
+static Texture2D backgroundTexture;
 
 static Camera2D camera;
+
+// internal functions, used restrictly by the game.c
+void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFactor);
 
 void InitGame(void)
 {
     InitPlayer(&player);
     playerTexture = LoadTexture("assets/images/player.png");
+    backgroundTexture = LoadTexture("assets/images/background.png");
 
     // Create the platforms
     platforms[0] = (Rectangle){0, 400, 1600, 50}; // ground
@@ -33,6 +39,25 @@ void InitGame(void)
     camera.zoom = 1.0f;
 }
 
+// Internal functions
+//------------------------------------------------------------------------------------------------
+void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFactor)
+{
+    int bgWidth = texture.width;
+    int screenWidth = GetScreenWidth();
+
+    float startX = camera.target.x * parallaxFactor - camera.offset.x * parallaxFactor;
+    int firstTileX = (int)(startX / bgWidth) - 1;
+    int tilesToDraw = screenWidth / bgWidth + 3;
+
+    for (int i = 0; i < tilesToDraw; i++)
+    {
+        int tileX = (firstTileX + i) * bgWidth;
+        DrawTexture(texture, tileX, 0, WHITE);
+    }
+}
+
+//------------------------------------------------------------------------------------------------
 void UpdateGame(void)
 {
     float delta = GetFrameTime();
@@ -44,6 +69,8 @@ void UpdateGame(void)
     camera.target = (Vector2){
         player.position.x + player.width / 2,
         300};
+
+    DrawParallaxBackground(backgroundTexture, camera, 0.5f);
 
     // Draw the map
     BeginMode2D(camera);
@@ -68,4 +95,5 @@ void UpdateGame(void)
 void CloseGame(void)
 {
     UnloadTexture(playerTexture);
+    UnloadTexture(backgroundTexture);
 }

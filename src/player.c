@@ -39,6 +39,7 @@ void InitPlayer(Player *player)
 }
 
 // internal functions
+//------------------------------------------------------------------------------------------------
 static void HandleMovementInput(Player *player)
 {
     if (player->state != PLAYER_ATTACK)
@@ -138,6 +139,48 @@ static void ApplyPhysics(Player *player, float delta, Rectangle *platforms, int 
     player->position.y = MyClamp(player->position.y, 0, WORLD_HEIGHT - player->height);
 }
 
+static void UpdateState(Player *player, float delta)
+{
+    // If attacking, ignores the rest
+    if (player->state == PLAYER_ATTACK)
+    {
+        player->frameSpeed = 12.0f;
+        player->maxFrames = 3;
+        player->actionTimer -= delta;
+        if (player->actionTimer <= 0)
+        {
+            player->state = PLAYER_IDLE;
+        }
+        return;
+    }
+
+    // State logic 
+    if (!player->isOnGround)
+        player->state = PLAYER_JUMP;
+    else if (player->velocity.x != 0)
+        player->state = PLAYER_WALK;
+    else 
+        player->state = PLAYER_IDLE;
+
+    // Configuration by state
+    switch (player->state)
+    {
+    case PLAYER_IDLE:
+        player->frameSpeed = 8.0f;
+        player->maxFrames = 6; // This is the quantity of frames the sprite has. Never forget to change it
+        break;
+    case PLAYER_WALK:
+        player->frameSpeed = 4.0f;
+        player->maxFrames = 8;
+        break;    
+    default:
+        break;
+    case PLAYER_JUMP:
+        player->frameSpeed = 4.0f;
+        player->maxFrames = 6;
+    }
+}
+
 static void UpdateAnimation(Player *player, float delta)
 {
     if (player->frameSpeed <= 0)
@@ -150,19 +193,27 @@ static void UpdateAnimation(Player *player, float delta)
         player->frame = (player->frame + 1) % player->maxFrames;
     }
 }
+//------------------------------------------------------------------------------------------------
 
 // Update
 void UpdatePlayer(Player *player, float delta, Rectangle *platforms, int platformCount)
 {
     HandleMovementInput(player);
     ApplyPhysics(player, delta, platforms, platformCount);
+    UpdateState(player, delta);
     UpdateAnimation(player, delta);
 };
 
 // Draw
 void DrawPlayer(Player player, Texture2D texture)
 {
-    Rectangle source = {(player).frame * 20, 0, 20, 40};
+    Rectangle source = {
+        player.frame * player.width,
+        player.state * player.height,
+        player.width,
+        player.height,
+    };
+
     Vector2 position = {player.position.x, player.position.y};
     DrawTextureRec(texture, source, position, WHITE);
 }
