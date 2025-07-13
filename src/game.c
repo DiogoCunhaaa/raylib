@@ -10,7 +10,8 @@ static Rectangle platforms[MAX_PLATFORMS];
 static int platformCount = 0;
 
 static Texture2D playerTexture;
-static Texture2D backgroundTexture;
+static Texture2D farBackgroundTexture;
+static Texture2D frontBackgroundTexture;
 
 static Camera2D camera;
 
@@ -21,7 +22,8 @@ void InitGame(void)
 {
     InitPlayer(&player);
     playerTexture = LoadTexture("assets/images/player.png");
-    backgroundTexture = LoadTexture("assets/images/background.png");
+    farBackgroundTexture = LoadTexture("assets/images/farBackground.png");
+    frontBackgroundTexture = LoadTexture("assets/images/frontBackground.png");
 
     // Create the platforms
     platforms[0] = (Rectangle){0, 400, 1600, 50}; // ground
@@ -46,14 +48,21 @@ void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFa
     int bgWidth = texture.width;
     int screenWidth = GetScreenWidth();
 
-    float startX = camera.target.x * parallaxFactor - camera.offset.x * parallaxFactor;
-    int firstTileX = (int)(startX / bgWidth) - 1;
-    int tilesToDraw = screenWidth / bgWidth + 3;
+    // Calculate the base position for the image
+    float parallaxPos = camera.target.x * parallaxFactor;
+
+    float viewLeft = parallaxPos - camera.offset.x;
+    int firstTileX = (int)(viewLeft / bgWidth);
+
+    float offsetX = viewLeft - (firstTileX * bgWidth);
+
+    // Calculates how much we need to draw
+    int tilesToDraw = screenWidth;
 
     for (int i = 0; i < tilesToDraw; i++)
     {
-        int tileX = (firstTileX + i) * bgWidth;
-        DrawTexture(texture, tileX, 0, WHITE);
+        float tileX = (firstTileX + i) * bgWidth - offsetX;
+        DrawTexture(texture, (int)tileX, 0, WHITE);
     }
 }
 
@@ -70,10 +79,10 @@ void UpdateGame(void)
         player.position.x + player.width / 2,
         300};
 
-    DrawParallaxBackground(backgroundTexture, camera, 0.5f);
-
     // Draw the map
     BeginMode2D(camera);
+    DrawParallaxBackground(farBackgroundTexture, camera, 0.2f);
+    DrawParallaxBackground(frontBackgroundTexture, camera, 0.5f);
 
     for (int i = 0; i < platformCount; i++)
     {
@@ -89,11 +98,12 @@ void UpdateGame(void)
     DrawText(TextFormat("Vel Y: %.2f", player.velocity.y), 10, 60, 20, BLUE);
     DrawText(TextFormat("Delta: %.4f", GetFrameTime()), 10, 80, 20, DARKGRAY);
     DrawText(TextFormat("POS Y: %.2f", player.position.y), 10, 100, 20, PINK);
-    DrawText(TextFormat("FPS: %d", GetFPS()), 10, 120, 20, YELLOW);
+    DrawText(TextFormat("POS X: %.2f", player.position.x), 10, 120, 20, PINK);
+    DrawText(TextFormat("FPS: %d", GetFPS()), 10, 140, 20, YELLOW);
 }
 
 void CloseGame(void)
 {
     UnloadTexture(playerTexture);
-    UnloadTexture(backgroundTexture);
+    UnloadTexture(farBackgroundTexture);
 }
