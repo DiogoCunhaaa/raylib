@@ -1,3 +1,4 @@
+//player.h
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -21,12 +22,14 @@ typedef struct Player
     float height;
     bool isOnGround;
     PlayerState state;
+
     int frame;
     float frameTime;
     float frameSpeed; // Velocity the sprite updates
     int maxFrames; // Frames the sprite has
     float actionTimer;// In the future, to set timer to actions like attack or dashes
 
+    bool directionFacing; // True = left, False = right
 } Player;
 
 // Player related functions

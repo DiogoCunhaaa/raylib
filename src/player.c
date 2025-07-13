@@ -47,10 +47,12 @@ static void HandleMovementInput(Player *player)
         if (IsKeyDown(KEY_A))
         {
             player->velocity.x = -MOVE_SPEED; // make the player walk left by making his speed -200.0f
+            player->directionFacing = true;   // turns the sprite left
         }
         else if (IsKeyDown(KEY_D))
         {
             player->velocity.x = MOVE_SPEED; // make the player walk right by making his speed 200.0f
+            player->directionFacing = false; // turns the sprite right
         }
         else
         {
@@ -154,12 +156,12 @@ static void UpdateState(Player *player, float delta)
         return;
     }
 
-    // State logic 
+    // State logic
     if (!player->isOnGround)
         player->state = PLAYER_JUMP;
     else if (player->velocity.x != 0)
         player->state = PLAYER_WALK;
-    else 
+    else
         player->state = PLAYER_IDLE;
 
     // Configuration by state
@@ -172,7 +174,7 @@ static void UpdateState(Player *player, float delta)
     case PLAYER_WALK:
         player->frameSpeed = 4.0f;
         player->maxFrames = 8;
-        break;    
+        break;
     default:
         break;
     case PLAYER_JUMP:
@@ -210,7 +212,7 @@ void DrawPlayer(Player player, Texture2D texture)
     Rectangle source = {
         player.frame * player.width,
         player.state * player.height,
-        player.width,
+        player.directionFacing ? -player.width : player.width,
         player.height,
     };
 

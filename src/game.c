@@ -53,7 +53,7 @@ void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFa
     float viewLeft = camera.target.x * parallaxFactor - camera.offset.x;
 
     // rest of 0 and bgWidth
-    float offset = (fmod(viewLeft, (float)bgWidth)) / 3;
+    float offset = (fmod(viewLeft, (float)bgWidth)) / 4;
     if (offset < 0)
     {
         offset += bgWidth;
@@ -70,8 +70,8 @@ void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFa
         DrawTexture(texture, (int)(firstTileX + i * bgWidth), 0, WHITE);
     }
 }
-
 //------------------------------------------------------------------------------------------------
+
 void UpdateGame(void)
 {
     float delta = GetFrameTime();
@@ -87,7 +87,7 @@ void UpdateGame(void)
     // Draw the map
     BeginMode2D(camera);
     DrawParallaxBackground(farBackgroundTexture, camera, 0.2f);
-    DrawParallaxBackground(frontBackgroundTexture, camera, 0.5f);
+    DrawParallaxBackground(frontBackgroundTexture, camera, 0.8f);
 
     for (int i = 0; i < platformCount; i++)
     {
