@@ -9,7 +9,7 @@
 
 #define GRAVITY 400.0f
 #define MOVE_SPEED 200.0f
-#define JUMP_FORCE -250.0f
+#define JUMP_FORCE -300.0f
 #define WORLD_WIDTH 1950
 #define WORLD_HEIGHT 450
 

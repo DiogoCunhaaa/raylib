@@ -1,4 +1,5 @@
 // game.c
+#include <math.h>
 #include "raylib.h"
 #include "game.h"
 #include "player.h"
@@ -49,20 +50,24 @@ void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFa
     int screenWidth = GetScreenWidth();
 
     // Calculate the base position for the image
-    float parallaxPos = camera.target.x * parallaxFactor;
+    float viewLeft = camera.target.x * parallaxFactor - camera.offset.x;
 
-    float viewLeft = parallaxPos - camera.offset.x;
-    int firstTileX = (int)(viewLeft / bgWidth);
+    // rest of 0 and bgWidth
+    float offset = (fmod(viewLeft, (float)bgWidth)) / 3;
+    if (offset < 0)
+    {
+        offset += bgWidth;
+    }
 
-    float offsetX = viewLeft - (firstTileX * bgWidth);
+    // Initial point, can be negative
+    float firstTileX = -offset;
 
     // Calculates how much we need to draw
     int tilesToDraw = screenWidth;
 
     for (int i = 0; i < tilesToDraw; i++)
     {
-        float tileX = (firstTileX + i) * bgWidth - offsetX;
-        DrawTexture(texture, (int)tileX, 0, WHITE);
+        DrawTexture(texture, (int)(firstTileX + i * bgWidth), 0, WHITE);
     }
 }
 
