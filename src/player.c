@@ -136,6 +136,8 @@ static void ApplyPhysics(Player *player, float delta, Rectangle *platforms, int 
 
     player->isOnGround = onGround;
 
+
+    
     // Clamp to avoid the player from exiting the screen
     player->position.x = MyClamp(player->position.x, 0, WORLD_WIDTH - player->width);
     player->position.y = MyClamp(player->position.y, 0, WORLD_HEIGHT - player->height);

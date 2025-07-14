@@ -3,14 +3,19 @@
 #include "raylib.h"
 #include "game.h"
 #include "player.h"
+#include "enemy.h"
 
-#define MAX_PLATFORMS 10
+#define MAX_PLATFORMS 100
 
 static Player player;
+
+static Enemy enemy;
+
 static Rectangle platforms[MAX_PLATFORMS];
 static int platformCount = 0;
 
 static Texture2D playerTexture;
+static Texture2D enemyTexture;
 static Texture2D farBackgroundTexture;
 static Texture2D frontBackgroundTexture;
 
@@ -22,18 +27,21 @@ void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFa
 void InitGame(void)
 {
     InitPlayer(&player);
+    InitEnemy(&enemy);
     playerTexture = LoadTexture("assets/images/player.png");
+    enemyTexture = LoadTexture("assets/images/enemy.png");
     farBackgroundTexture = LoadTexture("assets/images/farBackground.png");
     frontBackgroundTexture = LoadTexture("assets/images/frontBackground.png");
 
     // Create the platforms
     platforms[0] = (Rectangle){0, 400, 1600, 50}; // ground
     platforms[1] = (Rectangle){1650, 400, 300, 50};
-    platforms[2] = (Rectangle){300, 320, 100, 10};
-    platforms[3] = (Rectangle){600, 260, 120, 10};
-    platforms[4] = (Rectangle){1000, 300, 100, 10};
-    platforms[5] = (Rectangle){1300, 200, 100, 10};
-    platformCount = 6;
+    // platforms[2] = (Rectangle){300, 320, 100, 10};
+    // platforms[3] = (Rectangle){600, 260, 120, 10};
+    // platforms[4] = (Rectangle){1000, 300, 100, 10};
+    // platforms[5] = (Rectangle){1300, 200, 100, 10};
+
+    platformCount = 10;
 
     // init the cam
     camera.target = (Vector2){0, 0};
@@ -77,6 +85,7 @@ void UpdateGame(void)
     float delta = GetFrameTime();
 
     UpdatePlayer(&player, delta, platforms, platformCount);
+    UpdateEnemy(&enemy, delta, platforms, platformCount);
 
     // Updates the cam based on the player x
     // The y axys stays fixed
@@ -95,6 +104,7 @@ void UpdateGame(void)
     }
 
     DrawPlayer(player, playerTexture);
+    DrawEnemy(enemy, enemyTexture);
 
     EndMode2D();
 
@@ -111,4 +121,5 @@ void CloseGame(void)
 {
     UnloadTexture(playerTexture);
     UnloadTexture(farBackgroundTexture);
+    UnloadTexture(enemyTexture);
 }
