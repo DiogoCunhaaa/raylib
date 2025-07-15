@@ -8,7 +8,6 @@
 #define MAX_PLATFORMS 100
 
 static Player player;
-
 static Enemy enemy;
 
 static Rectangle platforms[MAX_PLATFORMS];
@@ -23,6 +22,7 @@ static Camera2D camera;
 
 // internal functions, used restrictly by the game.c
 void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFactor);
+void CheckCollisionPlayerEnemy(Player *player, Enemy *enemy, float delta);
 
 void InitGame(void)
 {
@@ -78,7 +78,30 @@ void DrawParallaxBackground(Texture2D texture, Camera2D camera, float parallaxFa
         DrawTexture(texture, (int)(firstTileX + i * bgWidth), 0, WHITE);
     }
 }
-//------------------------------------------------------------------------------------------------
+
+void CheckCollisionPlayerEnemy(Player *player, Enemy *enemy, float delta)
+{
+    Rectangle playerRect = {
+        player->position.x,
+        player->position.y,
+        player->width,
+        player->height,
+    };
+
+    Rectangle enemyRect = {
+        enemy->position.x,
+        enemy->position.y,
+        enemy->width,
+        enemy->height,
+    };
+
+   if  (CheckCollisionRecs(playerRect, enemyRect))
+   {
+        player->velocity.y = -300; // makes the player jump
+        player->isOnGround = false;      // makes sure the player can only jump when on ground
+   };
+}
+//---------------------------------------------------------------------------,---------------------
 
 void UpdateGame(void)
 {
@@ -86,6 +109,7 @@ void UpdateGame(void)
 
     UpdatePlayer(&player, delta, platforms, platformCount);
     UpdateEnemy(&enemy, delta, platforms, platformCount);
+    CheckCollisionPlayerEnemy(&player, &enemy, delta);
 
     // Updates the cam based on the player x
     // The y axys stays fixed
@@ -121,5 +145,6 @@ void CloseGame(void)
 {
     UnloadTexture(playerTexture);
     UnloadTexture(farBackgroundTexture);
+    UnloadTexture(frontBackgroundTexture);
     UnloadTexture(enemyTexture);
 }
