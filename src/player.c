@@ -37,6 +37,10 @@ void InitPlayer(Player *player)
     player->maxFrames = 8;     // default: idle
 
     player->actionTimer = 0.0f;
+
+    player->lifeLeft = 3;
+    player->isHurt = false;
+    player->hurtTimer = 0.0f;
 }
 
 // internal functions
@@ -203,7 +207,19 @@ static void UpdateAnimation(Player *player, float delta)
 // Update
 void UpdatePlayer(Player *player, float delta, Rectangle *platforms, int platformCount)
 {
-    HandleMovementInput(player);
+    if (player->isHurt)
+    {
+        player->hurtTimer -=delta;
+        if (player->hurtTimer <= 0)
+        {
+            player->isHurt = false;
+            player->hurtTimer = 0;
+        }
+    }
+    else
+    {
+        HandleMovementInput(player); // <- only calls if not hurt (for knockback)
+    }
     ApplyPhysics(player, delta, platforms, platformCount);
     UpdateState(player, delta);
     UpdateAnimation(player, delta);

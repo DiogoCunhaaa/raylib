@@ -1,4 +1,4 @@
-//player.h
+// player.h
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -25,11 +25,15 @@ typedef struct Player
 
     int frame;
     float frameTime;
-    float frameSpeed; // Velocity the sprite updates
-    int maxFrames; // Frames the sprite has
-    float actionTimer;// In the future, to set timer to actions like attack or dashes
+    float frameSpeed;  // Velocity the sprite updates
+    int maxFrames;     // Frames the sprite has
+    float actionTimer; // In the future, to set timer to actions like attack or dashes
 
     bool directionFacing; // True = left, False = right
+
+    int lifeLeft;
+    bool isHurt;
+    float hurtTimer;
 } Player;
 
 // Player related functions

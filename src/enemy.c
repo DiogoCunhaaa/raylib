@@ -1,4 +1,4 @@
-// enemey.c
+// enemy.c
 
 #include "enemy.h"
 #include "utils.h"
